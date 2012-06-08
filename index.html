@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Violate Twitter Brand Guidelines</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Violate Twitter Brand Guidelines">
+    <meta name="author" content="Bertrand Fan">
+
+    <!--
+        
+        Violate Twitter Brand Guidelines
+        Bertrand Fan (bertrand@fan.net - http://thatsaspicymeatball.com - @bertrandom)
+        2012-06-07
+        
+        Special thanks to Alex (http://www.kidkhack.com/) for the Batman vector image.
+        
+    -->
+
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+      
+      #container {
+          text-align: center;
+      }
+      
+      #buttons {
+          display: inline-block;
+      }
+      
+      #footer {
+          margin-top: 5px;
+      }
+      
+      #logo {
+          position: relative;
+          top: -7px;
+      }
+      
+    </style>
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <script src="js/jquery-1.7.2.min.js"></script>
+    <script src="js/d3.v2.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-8093261-5']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>    
+
+  </head>
+
+  <body>
+
+    <div class="container" id="container">
+
+        <h1>Violate <a href="https://twitter.com/about/logos"><img id="logo" src="images/twitter_logo.png" /></a> <a href="https://twitter.com/about/logos">Brand Guidelines</a></h1>
+        
+        <div>
+            <svg width="1024px" height="500px" id="birdhouse"></svg>
+        </div>
+        
+        <div id="buttons" class="btn-group">
+          <button class="btn btn-large" id="btn_chirp">Chirp</button>
+          <button class="btn btn-large" id="btn_rotate">Rotate</button>
+          <button class="btn btn-large" id="btn_multiply">Multiply</button>
+          <button class="btn btn-large" id="btn_disco">Disco</button>
+          <button class="btn btn-large" id="btn_ledge">Ledge</button>
+          <button class="btn btn-large" id="btn_batman" rel="tooltip" title="Vector Batman by Alex Lambert">Batman</button>
+          <button class="btn btn-large" id="btn_reset">Reset</button>
+        </div>
+        
+        <div id="footer">
+            <a href="https://twitter.com/bertrandom" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @bertrandom</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+
+    </div>
+    
+    <script type="text/javascript">
+
+	    $(document).ready(function(){
+            
+            var birdhouse = d3.select("#birdhouse");
+                
+            w = birdhouse.style('width').replace("px", "");
+            h = birdhouse.style('height').replace("px", "");
+            
+            var color = d3.interpolateRgb("#aad", "#556");
+            
+            var ledges = false;
+            var disco = false;
+            var chirped = false;
+            
+            var batman = false;
+            
+            function clone(selector) {
+
+                var node = d3.select(selector).node();
+                return d3.select(node.parentNode.insertBefore(node.cloneNode(true), node.nextSibling));
+
+            }
+                
+            d3.xml("images/twitter-bird-light-bgs.svg", "image/svg+xml", function(xml) {
+                $('#birdhouse')[0].appendChild(xml.documentElement);
+                
+                d3.select('#birdhouse .bird')
+                    .data([{
+                        x: (w - 100) / 2, 
+                        y: (h - 100) / 2, 
+                        w: 100, 
+                        h: 100,
+                        rotation: 0
+                    }])
+                    .attr('x', function(d) { return d.x; })
+                    .attr('y', function(d) { return d.y; })
+                    .attr('width', function(d) { return d.w + 'px'; })
+                    .attr('height', function(d) { return d.h + 'px'; })
+                                                
+                $('#btn_multiply').click(function(e) {
+
+                    var width = Math.floor(Math.random() * (100 - 50 + 1)) + 50;
+                    var height = width;
+
+                    var x = Math.floor(Math.random() * ((w - width) - 0 + 1)) + 0;
+                    var y = Math.floor(Math.random() * ((h - height) - 0 + 1)) + 0;
+
+                    var bird = clone('#birdhouse .bird');
+                    
+                    bird
+                        .data([{
+                            x: x, 
+                            y: y, 
+                            w: width, 
+                            h: height,
+                            rotation: d3.select('#birdhouse .bird').datum().rotation
+                        }])
+                        .attr('x', function(d) { return d.x; })
+                        .attr('y', function(d) { return d.y; })
+                        .attr('width', function(d) { return d.w + 'px'; })
+                        .attr('height', function(d) { return d.h + 'px'; });
+                        
+                    if (!disco) {
+
+                        bird.select('path')
+                        .attr("fill", '#2CAAE1');
+
+                    } else {
+
+                        bird.select('path')
+                        .attr("fill", function() { return "hsl(" + Math.random() * 360 + ",100%,50%)"; });
+
+                    }
+
+                });                
+                
+                $('#btn_rotate').click(function(e) {
+
+                    var bird = d3.selectAll("#birdhouse .bird");
+                    
+                    bird.select('path')
+                        .attr("transform", function(d) {
+                            
+                            d.rotation = d.rotation - 90;
+                            
+                            if (d.rotation == 360) d.rotation = 0;
+                            
+                            return "rotate(" + d.rotation + " 150 150)";
+                            
+                        });
+
+                });     
+
+                $('#btn_chirp').click(function(e) {
+                    
+                    if (chirped) {
+                        
+                        d3.selectAll("#birdhouse .bird .speech").remove();
+                        
+                    } else {
+                        
+                        var bird = d3.selectAll("#birdhouse .bird");
+
+                        $('#birdhouse .bird').each(function(index, node) {
+
+                            d3.xml("images/speech.svg", "image/svg+xml", function(xml) {
+                                node.appendChild(xml.documentElement);
+                            });
+
+                        });
+
+                    }
+                    
+                    chirped = !chirped;
+                    
+                    
+                });
+                
+                $('#btn_disco').click(function(e) {
+                    
+                    var bird = d3.selectAll("#birdhouse .bird");
+
+                    if (disco) {
+
+                        bird.select('path')
+                        .attr("fill", '#2CAAE1');
+                        
+                    } else {
+
+                        bird.select('path')
+                        .attr("fill", function() { return "hsl(" + Math.random() * 360 + ",100%,50%)"; });
+                        
+                    }
+                    
+                    disco = !disco;
+                    
+                });                
+                
+                $('#btn_ledge').click(function(e) {
+                    
+                    if (ledges) {
+                        
+                        d3.selectAll("#birdhouse .bird rect")
+                            .remove();                        
+                        
+                    } else {
+                        
+                        d3.selectAll("#birdhouse .bird")
+                            .append('rect')
+                            .attr('width', '300px')
+                            .attr('height', '20px')
+                            .attr('x', 0)
+                            .attr('y', 225)
+                            .attr('fill', '#cccccc')
+
+                    }
+
+                    ledges = !ledges;
+
+                });
+
+
+                var reset = function(e) {
+                    
+                    d3.selectAll("#birdhouse .bird").remove();
+                    
+                    ledges = false;
+                    disco = false;
+                    chirped = false;
+                    
+                    d3.xml("images/twitter-bird-light-bgs.svg", "image/svg+xml", function(xml) {
+                        $('#birdhouse')[0].appendChild(xml.documentElement);
+
+                        d3.select('#birdhouse .bird')
+                            .data([{
+                                x: (w - 100) / 2, 
+                                y: (h - 100) / 2, 
+                                w: 100, 
+                                h: 100,
+                                rotation: 0
+                            }])
+                            .attr('x', function(d) { return d.x; })
+                            .attr('y', function(d) { return d.y; })
+                            .attr('width', function(d) { return d.w + 'px'; })
+                            .attr('height', function(d) { return d.h + 'px'; })
+                    });
+                    
+                }
+
+                $('#btn_reset').click(function(e) {
+                    
+                    if (batman) {
+                        $('#buttons .btn').fadeIn('fast');
+                        batman = false;
+                    }
+                                        
+                    reset();
+                    
+                });                           
+
+                $('#btn_batman').tooltip();
+
+                $('#btn_batman').click(function(e) {
+                    
+                    d3.selectAll("#birdhouse .bird").remove();
+
+                    ledges = false;
+                    disco = false;
+                    chirped = false;
+
+                    d3.xml("images/batbird.svg", "image/svg+xml", function(xml) {
+                        $('#birdhouse')[0].appendChild(xml.documentElement);
+
+                        d3.select('#birdhouse .bird')
+                            .data([{
+                                x: (w - 300) / 2, 
+                                y: (h - 300) / 2, 
+                                w: 300, 
+                                h: 300,
+                                rotation: 0
+                            }])
+                            .attr('x', function(d) { return d.x; })
+                            .attr('y', function(d) { return d.y; })
+                            .attr('width', function(d) { return d.w + 'px'; })
+                            .attr('height', function(d) { return d.h + 'px'; })
+                    });       
+                    
+                    $('#buttons .btn').each(function (index,node) {
+
+                        node = $(node);
+                        
+                        if (node[0].id != 'btn_reset' && node[0].id != 'btn_ledge') {
+                            node.fadeOut('fast');
+                        }
+
+                    });                 
+                    
+                    batman = !batman;
+                                        
+                });                           
+                
+            });
+            
+        });
+        
+    </script>
+    
+  </body>
+</html>
